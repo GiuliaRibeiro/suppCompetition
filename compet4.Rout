@@ -1,0 +1,49 @@
+
+R version 3.3.2 (2016-10-31) -- "Sincere Pumpkin Patch"
+Copyright (C) 2016 The R Foundation for Statistical Computing
+Platform: x86_64-pc-linux-gnu (64-bit)
+
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under certain conditions.
+Type 'license()' or 'licence()' for distribution details.
+
+  Natural language support but running in an English locale
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
+
+[Previously saved workspace restored]
+
+> source("fitfunctions.R")
+Loading required package: coda
+Linked to JAGS 4.2.0
+Loaded modules: basemod,bugs
+
+Attaching package: ‘R2jags’
+
+The following object is masked from ‘package:coda’:
+
+    traceplot
+
+> 
+> 
+> st.vals4 <- function(){list(rA= rnorm(1,2,0.1),
++                            rP= rnorm(1,2,0.1),
++                            kA= rnorm(1,3000,50),
++                            kP= rnorm(1,3000,50),    
++                            aPA = rnorm(1,1,0.05),
++                            aAP = rnorm(1,1,0.05)
++                            )
++ }
+> ## Fitting the model
+> fit4 <-  fit.LV(data.list = experim4, start.vals= st.vals4, n.iter = 1e8)
+> save(fit4, file="compfit4.RData")
+> 
+> proc.time()
+      user     system    elapsed 
+     2.696      0.152 168457.889 

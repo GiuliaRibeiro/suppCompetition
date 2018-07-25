@@ -1,0 +1,52 @@
+model {	
+      	#rA ~ dnorm(2, 0.1)
+	#rP ~ dnorm(2, 0.1)
+	rA ~ dlnorm(0.3456552, 0.08894644)
+	rP ~ dlnorm(0.265515, 0.02621241)
+	#kA ~ dlnorm(7.622689, 0.05478535)
+	#kP ~ dlnorm(9.829994, 0.0154147)
+	kA ~ dunif(1000, 35000)
+	kP ~ dunif(1000, 35000)
+	#aPA ~ dunif(0, 500)
+	#aAP ~ dunif(0, 500)
+	aAP ~ dlnorm(1, 2.5)
+	aPA ~ dlnorm(-1.75, 2.5)
+	#lpA ~ dnorm(4.5,0.1)
+	#lpP ~ dnorm(4.5,0.1)
+        #logit(pA) <- lpA
+	#logit(pP) <- lpP
+	pA ~ dunif(0.8,1)
+	pP ~ dunif(0.8,1)
+	Arc[1] <- A0
+	Pyx[1] <- P0
+	lambA[1] <- Arc[1]*sampArea/totArea
+	lambP[1] <- Pyx[1]*sampArea/totArea
+	espA[1] <- lambA[1]*pA
+	espP[1] <- lambP[1]*pP
+	for(i in 1:nSamples) {
+	       NA[i,1] ~ dpois(lambA[1])
+	       NP[i,1] ~ dpois(lambP[1])
+	       #nA[i,1] ~ dbin(pA, NA[i,1])
+	       #nP[i,1] ~ dbin(pP, NP[i,1])
+	        }
+	for(t in 2:nIntervals) {
+	      muA[t-1] <- Arc[t-1] + (rA* Arc[t-1] * ( 1 -  (Arc[t-1] + aPA*Pyx[t-1])/kA ) )*dt[t-1]
+	      muP[t-1] <- Pyx[t-1] + (rP * Pyx[t-1] * ( 1 - (Pyx[t-1] + aAP*Arc[t-1])/kP ) )*dt[t-1]
+	      Arc[t] ~ dpois(muA[t-1])
+	      Pyx[t] ~ dpois(muP[t-1] )
+	      lambA[t] <- Arc[t] * sampArea/totArea
+	      lambP[t] <- Pyx[t] * sampArea/totArea	
+	      for(i in 1:nSamples){
+	      	    NA[i,t] ~ dpois(lambA[t])
+	      	    NP[i,t] ~ dpois(lambP[t])
+		    nA[i,t-1] ~ dbinom(pA, NA[i,t])
+		    nP[i,t-1] ~ dbinom(pP, NP[i,t]) 
+	      	    }
+		    espA[t] <- lambA[t]*pA
+		    espP[t] <- lambP[t]*pP
+		    
+
+	}
+}
+
+		

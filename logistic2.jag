@@ -1,0 +1,25 @@
+model {	
+	r ~ dlnorm(-2, 2)
+	k ~ dunif(10, 2e8)
+	#lp ~ dnorm(2,1)
+	#logit(p) <- lp
+	p ~ dunif(0.9,1)
+	tot[1] <- N0
+	lamb[1] <- tot[1]*sampArea/totArea
+	esp[1] <- lamb[1]*p
+	for(i in 1:nSamples) {
+	       N[i,1] ~ dpois(lamb[1])
+	        }
+	for(t in 2:nIntervals) {
+	      mu[t-1] <- tot[t-1] + (r * tot[t-1] * ( 1 - tot[t-1]/k))*dt[t-1]
+	      tot[t] ~ dpois(mu[t-1])
+	      lamb[t] <- tot[t] * sampArea/totArea
+	      for(i in 1:nSamples){
+	      	    N[i,t] ~ dpois(lamb[t])
+		    n[i,t-1] ~ dbinom(p, N[i,t])
+		    }
+		    esp[t] <- lamb[t]*p
+	}
+}
+
+		
